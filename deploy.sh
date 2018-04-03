@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
-#1.安装ldap server
+#1.安装、启动、关闭ldap server
+#1.1安装ldap server
 sudo apt-get install slapd
+
+#1.2启动ldap server
+systemctl start slapd
+
+#1.3关闭ldap server
+systemctl stop slapd
+
+#1.4查看ldap server状态
+systemctl status slapd
 
 #2.重新配置，输入下面这条命令时，弹出图形界面，进入人机交互，这条命令下面的注释，是人机交互的提示和建议项
 sudo dpkg-reconfigure slapd
@@ -48,3 +58,30 @@ ldappasswd -x -D "cn=admin,dc=globalvillage,dc=biz" -w "888888" "cn=zhangqingyua
 
 #7.查询用户和用户组
 ldapsearch -x -b "ou=OPS,dc=globalvillage,dc=biz"
+
+#8.删除用户
+ldapdelete -x -D "cn=admin,dc=globalvillage,dc=biz" -w 888888 "cn=zhangqingyuan,ou=OPS,dc=globalvillage,dc=biz"
+
+#9.修改用户
+#9.1 新增某些字段
+sudo cat > /etc/openldap/schema/modify_add.ldif << EOF
+dn: cn=zhangqingyuan,ou=OPS,dc=globalvillage,dc=biz
+add: mail
+mail: 894500671@qq.com
+EOF
+ldapmodify -x -D "cn=admin,dc=globalvillage,dc=biz" -w 888888 -f /etc/openldap/schema/modify_add.ldif
+
+#9.2 修改某些字段
+sudo cat > /etc/openldap/schema/modify_replace.ldif << EOF
+dn: cn=zhangqingyuan,ou=OPS,dc=globalvillage,dc=biz
+replace: mail
+mail: 894500670@qq.com
+EOF
+ldapmodify -x -D "cn=admin,dc=globalvillage,dc=biz" -w 888888 -f /etc/openldap/schema/modify_replace.ldif
+
+#9.3 删除某些字段
+sudo cat > /etc/openldap/schema/modify_delete.ldif << EOF
+dn: cn=zhangqingyuan,ou=OPS,dc=globalvillage,dc=biz
+delete: mail
+EOF
+ldapmodify -x -D "cn=admin,dc=globalvillage,dc=biz" -w 888888 -f /etc/openldap/schema/modify_delete.ldif
