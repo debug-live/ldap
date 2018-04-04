@@ -85,3 +85,13 @@ dn: cn=zhangqingyuan,ou=OPS,dc=globalvillage,dc=biz
 delete: mail
 EOF
 ldapmodify -x -D "cn=admin,dc=globalvillage,dc=biz" -w 888888 -f /etc/openldap/schema/modify_delete.ldif
+
+#9.4 重命名
+#deleteoldrdn表示是否删除旧的条目，1-删除，0—不删除
+sudo cat > /etc/openldap/schema/modify_rename.ldif << EOF
+dn: cn=zhangqingyuan,ou=OPS,dc=globalvillage,dc=biz
+changetype: modrdn
+newrdn: cn=zqy
+deleteoldrdn: 0
+EOF
+ldapmodify -x -D "cn=admin,dc=globalvillage,dc=biz" -w 888888 -f /etc/openldap/schema/modify_rename.ldif
